@@ -50,6 +50,7 @@ import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -94,12 +95,14 @@ public class CPPublisherDisplayContext extends BaseCPPublisherDisplayContext {
 			ModelResourcePermission<DLFileEntry>
 				dlFileEntryModelResourcePermission,
 			FriendlyURLEntryLocalService friendlyURLEntryLocalService,
+			GroupLocalService groupLocalService,
 			HttpServletRequest httpServletRequest, Portal portal)
 		throws PortalException {
 
 		super(
 			contentListEntryRendererRegistry, cpContentListRendererRegistry,
-			cpPublisherWebHelper, cpTypeRegistry, httpServletRequest);
+			cpPublisherWebHelper, cpTypeRegistry, groupLocalService,
+			httpServletRequest);
 
 		_amImageHTMLTagFactory = amImageHTMLTagFactory;
 		_commerceCatalogDefaultImage = commerceCatalogDefaultImage;

@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -55,6 +56,7 @@ import javax.portlet.PortletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.liferay.portlet.display.template.portlet.action.BaseConfigurationAction;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -65,7 +67,7 @@ import org.osgi.service.component.annotations.Reference;
 	property = "javax.portlet.name=" + CPPortletKeys.CP_PUBLISHER_WEB,
 	service = ConfigurationAction.class
 )
-public class CPPublisherConfigurationAction extends DefaultConfigurationAction {
+public class CPPublisherConfigurationAction extends BaseConfigurationAction {
 
 	@Override
 	public String getJspPath(HttpServletRequest httpServletRequest) {
@@ -77,7 +79,7 @@ public class CPPublisherConfigurationAction extends DefaultConfigurationAction {
 						_cpContentListEntryRendererRegistry,
 						_cpContentListRendererRegistry, _cpDataSourceRegistry,
 						_cpDefinitionHelper, _cpInstanceHelper,
-						_cpPublisherWebHelper, _cpTypeRegistry,
+						_cpPublisherWebHelper, _cpTypeRegistry, _groupLocalService,
 						httpServletRequest, _itemSelector);
 
 			httpServletRequest.setAttribute(
@@ -90,6 +92,9 @@ public class CPPublisherConfigurationAction extends DefaultConfigurationAction {
 
 		return "/product_publisher/configuration.jsp";
 	}
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Override
 	public void processAction(

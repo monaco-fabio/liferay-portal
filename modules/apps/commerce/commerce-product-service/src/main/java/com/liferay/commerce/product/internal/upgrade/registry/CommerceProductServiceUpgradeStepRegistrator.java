@@ -8,6 +8,7 @@ package com.liferay.commerce.product.internal.upgrade.registry;
 import com.liferay.account.settings.AccountEntryGroupSettings;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.commerce.product.constants.CPPortletKeys;
 import com.liferay.commerce.product.internal.upgrade.v1_10_1.CommerceSiteTypeUpgradeProcess;
 import com.liferay.commerce.product.internal.upgrade.v1_11_0.CPAttachmentFileEntryGroupUpgradeProcess;
 import com.liferay.commerce.product.internal.upgrade.v1_11_1.CPDisplayLayoutUpgradeProcess;
@@ -60,9 +61,12 @@ import com.liferay.portal.kernel.upgrade.UpgradeProcessFactory;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 
+import com.liferay.portlet.display.template.upgrade.BaseUpgradePortletPreferences;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import javax.portlet.PortletPreferences;
 
 /**
  * @author Ethan Bustad
@@ -510,6 +514,31 @@ public class CommerceProductServiceUpgradeStepRegistrator
 		registry.register(
 			"5.20.0", "5.21.0", CPConfigurationEntryTable.create(),
 			CPConfigurationListTable.create());
+
+		registry.register(
+			"5.21.0", "5.21.1",
+			new BaseUpgradePortletPreferences() {
+				@Override
+				protected String[] getPortletIds() {
+					return new String[] {
+						CPPortletKeys.CP_COMPARE_CONTENT_MINI_WEB,
+						CPPortletKeys.CP_COMPARE_CONTENT_WEB,
+						CPPortletKeys.CP_CONTENT_WEB,
+						CPPortletKeys.CP_OPTION_FACETS + "_INSTANCE_%",
+						CPPortletKeys.CP_PUBLISHER_WEB + "_INSTANCE_%",
+						CPPortletKeys.CP_SEARCH_RESULTS + "_INSTANCE_%",
+						CPPortletKeys.CP_SPECIFICATION_OPTION_FACETS + "_INSTANCE_%",
+					};
+				}
+
+				@Override
+				protected void upgradePreferences(
+					long companyId, long ownerId, int ownerType, long plid,
+					String portletId, PortletPreferences portletPreferences)
+					throws Exception {
+
+				}
+			});
 
 		if (_log.isInfoEnabled()) {
 			_log.info("Commerce product upgrade step registrator finished");

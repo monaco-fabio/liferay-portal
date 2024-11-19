@@ -22,6 +22,9 @@ import com.liferay.commerce.util.CommerceUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -42,7 +45,7 @@ public class BaseCPPublisherDisplayContext {
 			CPContentListEntryRendererRegistry contentListEntryRendererRegistry,
 			CPContentListRendererRegistry cpContentListRendererRegistry,
 			CPPublisherWebHelper cpPublisherWebHelper,
-			CPTypeRegistry cpTypeRegistry,
+			CPTypeRegistry cpTypeRegistry, GroupLocalService groupLocalService,
 			HttpServletRequest httpServletRequest)
 		throws PortalException {
 
@@ -51,6 +54,7 @@ public class BaseCPPublisherDisplayContext {
 		this.cpContentListRendererRegistry = cpContentListRendererRegistry;
 		this.cpPublisherWebHelper = cpPublisherWebHelper;
 		this.cpTypeRegistry = cpTypeRegistry;
+		this.groupLocalService = groupLocalService;
 
 		cpContentRequestHelper = new CPContentRequestHelper(httpServletRequest);
 
@@ -172,7 +176,65 @@ public class BaseCPPublisherDisplayContext {
 	}
 
 	public long getDisplayStyleGroupId() {
-		return cpPublisherPortletInstanceConfiguration.displayStyleGroupId();
+		if (displayStyleGroupId != null) {
+			return displayStyleGroupId;
+		}
+
+		String displayStyleGroupExternalReferenceCode =
+			cpPublisherPortletInstanceConfiguration.
+				displayStyleGroupExternalReferenceCode();
+
+		ThemeDisplay themeDisplay = cpContentRequestHelper.getThemeDisplay();
+
+		Group group = themeDisplay.getScopeGroup();
+
+		if (Validator.isNotNull(displayStyleGroupExternalReferenceCode)) {
+			group = groupLocalService.fetchGroupByExternalReferenceCode(
+				displayStyleGroupExternalReferenceCode,
+				themeDisplay.getCompanyId());
+		}
+
+		if (group != null) {
+			displayStyleGroupId = group.getGroupId();
+		}
+		else {
+			displayStyleGroupId = themeDisplay.getScopeGroupId();
+		}
+
+		return displayStyleGroupId;
+	}
+
+	protected Long displayStyleGroupId;
+	protected String displayStyleGroupKey;
+	protected final GroupLocalService groupLocalService;
+
+	public String getDisplayStyleGroupKey() {
+		if (Validator.isNotNull(displayStyleGroupKey)) {
+			return displayStyleGroupKey;
+		}
+
+		String displayStyleGroupExternalReferenceCode =
+			cpPublisherPortletInstanceConfiguration.
+				displayStyleGroupExternalReferenceCode();
+
+		ThemeDisplay themeDisplay = cpContentRequestHelper.getThemeDisplay();
+
+		Group group = themeDisplay.getScopeGroup();
+
+		if (Validator.isNotNull(displayStyleGroupExternalReferenceCode)) {
+			group = groupLocalService.fetchGroupByExternalReferenceCode(
+				displayStyleGroupExternalReferenceCode,
+				themeDisplay.getCompanyId());
+		}
+
+		if (group != null) {
+			displayStyleGroupKey = group.getGroupKey();
+		}
+		else {
+			displayStyleGroupKey = StringPool.BLANK;
+		}
+
+		return displayStyleGroupKey;
 	}
 
 	public int getPaginationDelta() {

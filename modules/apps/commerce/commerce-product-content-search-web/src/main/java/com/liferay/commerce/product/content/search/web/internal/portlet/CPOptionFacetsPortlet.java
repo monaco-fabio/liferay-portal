@@ -71,16 +71,16 @@ public class CPOptionFacetsPortlet extends MVCPortlet {
 		_buildCPOptionsSearchFacetDisplayContext(RenderRequest renderRequest) {
 
 		CPOptionsSearchFacetDisplayContextBuilder
-			cpOptionsSearchFacetDisplayBuilder =
+			cpOptionsSearchFacetDisplayContextBuilder =
 				new CPOptionsSearchFacetDisplayContextBuilder(renderRequest);
 
-		cpOptionsSearchFacetDisplayBuilder.cpOptionLocalService(
+		cpOptionsSearchFacetDisplayContextBuilder.cpOptionLocalService(
 			_cpOptionLocalService);
-		cpOptionsSearchFacetDisplayBuilder.portal(_portal);
-		cpOptionsSearchFacetDisplayBuilder.portletSharedSearchRequest(
+		cpOptionsSearchFacetDisplayContextBuilder.portal(_portal);
+		cpOptionsSearchFacetDisplayContextBuilder.portletSharedSearchRequest(
 			_portletSharedSearchRequest);
 
-		return cpOptionsSearchFacetDisplayBuilder.build();
+		return cpOptionsSearchFacetDisplayContextBuilder.build();
 	}
 
 	@Reference

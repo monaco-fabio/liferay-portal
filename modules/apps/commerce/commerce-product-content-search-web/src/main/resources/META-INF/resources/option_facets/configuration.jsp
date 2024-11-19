@@ -34,8 +34,8 @@ CPOptionsSearchFacetDisplayContext cpOptionsSearchFacetDisplayContext = new CPOp
 			<div class="display-template">
 				<liferay-template:template-selector
 					className="<%= CPOptionsSearchFacetDisplayContext.class.getName() %>"
-					displayStyle='<%= portletPreferences.getValue("displayStyle", "") %>'
-					displayStyleGroupId="<%= cpOptionsSearchFacetDisplayContext.getDisplayStyleGroupId() %>"
+					displayStyle='<%= cpOptionsSearchFacetDisplayContext.getDisplayStyle() %>'
+					displayStyleGroupKey="<%= cpOptionsSearchFacetDisplayContext.getDisplayStyleGroupKey() %>"
 					refreshURL="<%= configurationRenderURL %>"
 					showEmptyOption="<%= true %>"
 				/>

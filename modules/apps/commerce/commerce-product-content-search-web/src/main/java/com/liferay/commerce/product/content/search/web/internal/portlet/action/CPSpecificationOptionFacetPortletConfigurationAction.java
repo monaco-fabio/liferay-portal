@@ -10,7 +10,6 @@ import com.liferay.commerce.product.content.search.web.internal.display.context.
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
-import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropertiesParamUtil;
@@ -24,6 +23,7 @@ import javax.portlet.PortletConfig;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.liferay.portlet.display.template.portlet.action.BaseConfigurationAction;
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -33,8 +33,8 @@ import org.osgi.service.component.annotations.Component;
 	property = "javax.portlet.name=" + CPPortletKeys.CP_SPECIFICATION_OPTION_FACETS,
 	service = ConfigurationAction.class
 )
-public class CPSpecificationtOptionFacetPortletConfigurationAction
-	extends DefaultConfigurationAction {
+public class CPSpecificationOptionFacetPortletConfigurationAction
+	extends BaseConfigurationAction {
 
 	@Override
 	public String getJspPath(HttpServletRequest httpServletRequest) {
@@ -85,6 +85,6 @@ public class CPSpecificationtOptionFacetPortletConfigurationAction
 	private static final int _MAX_SIZE_LIMIT = 100;
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		CPSpecificationtOptionFacetPortletConfigurationAction.class);
+		CPSpecificationOptionFacetPortletConfigurationAction.class);
 
 }

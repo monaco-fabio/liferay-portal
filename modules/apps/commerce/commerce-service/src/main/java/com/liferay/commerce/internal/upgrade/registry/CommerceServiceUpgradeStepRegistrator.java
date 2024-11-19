@@ -11,6 +11,7 @@ import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.account.service.AccountGroupLocalService;
 import com.liferay.account.service.AccountGroupRelLocalService;
 import com.liferay.account.service.AccountRoleLocalService;
+import com.liferay.commerce.constants.CommercePortletKeys;
 import com.liferay.commerce.internal.upgrade.v11_5_1.SupplierRoleUpgradeProcess;
 import com.liferay.commerce.internal.upgrade.v11_5_2.CommerceChannelRepositoryUpgradeProcess;
 import com.liferay.commerce.internal.upgrade.v1_2_0.CommerceSubscriptionUpgradeProcess;
@@ -44,6 +45,7 @@ import com.liferay.commerce.model.impl.CommerceOrderItemModelImpl;
 import com.liferay.commerce.model.impl.CommerceOrderModelImpl;
 import com.liferay.commerce.model.impl.CommerceShipmentItemModelImpl;
 import com.liferay.commerce.model.impl.CommerceShippingMethodModelImpl;
+import com.liferay.commerce.product.constants.CPPortletKeys;
 import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CPInstanceLocalService;
 import com.liferay.commerce.product.service.CommerceChannelAccountEntryRelLocalService;
@@ -80,8 +82,11 @@ import com.liferay.portal.kernel.upgrade.MVCCVersionUpgradeProcess;
 import com.liferay.portal.kernel.upgrade.UpgradeProcessFactory;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 
+import com.liferay.portlet.display.template.upgrade.BaseUpgradePortletPreferences;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import javax.portlet.PortletPreferences;
 
 /**
  * @author Rodrigo Guedes de Souza
@@ -732,6 +737,30 @@ public class CommerceServiceUpgradeStepRegistrator
 			UpgradeProcessFactory.alterColumnName(
 				CommerceOrderItemModelImpl.TABLE_NAME, "deliveryGroup",
 				"deliveryGroupName VARCHAR(75) null"));
+
+		registry.register(
+			"12.0.0", "12.0.1",
+			new BaseUpgradePortletPreferences() {
+				@Override
+				protected String[] getPortletIds() {
+					return new String[] {
+						CommercePortletKeys.COMMERCE_ADDRESS_CONTENT,
+						CommercePortletKeys.COMMERCE_CART_CONTENT + "_INSTANCE_%",
+						CommercePortletKeys.COMMERCE_CART_CONTENT_MINI,
+						CommercePortletKeys.COMMERCE_CART_CONTENT_TOTAL,
+						CommercePortletKeys.COMMERCE_OPEN_ORDER_CONTENT,
+						CommercePortletKeys.COMMERCE_ORDER_CONTENT
+					};
+				}
+
+				@Override
+				protected void upgradePreferences(
+					long companyId, long ownerId, int ownerType, long plid,
+					String portletId, PortletPreferences portletPreferences)
+					throws Exception {
+
+				}
+			});
 
 		if (_log.isInfoEnabled()) {
 			_log.info("Commerce upgrade step registrator finished");

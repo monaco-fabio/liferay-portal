@@ -7,16 +7,22 @@ package com.liferay.commerce.product.content.search.web.internal.display.context
 
 import com.liferay.commerce.constants.CommerceWebKeys;
 import com.liferay.commerce.context.CommerceContext;
+import com.liferay.commerce.product.content.search.web.internal.configuration.CPOptionFacetsPortletInstanceConfiguration;
+import com.liferay.commerce.product.content.search.web.internal.configuration.CPSearchResultsPortletInstanceConfiguration;
 import com.liferay.commerce.product.content.search.web.internal.util.CPOptionFacetsUtil;
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.commerce.product.model.CPOption;
 import com.liferay.commerce.product.service.CPOptionLocalService;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.search.facet.Facet;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 
@@ -31,19 +37,29 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Andrea Sbarra
+ * @author Alessio Antonio Rendina
  */
 public class CPOptionsSearchFacetDisplayContext implements Serializable {
 
 	public CPOptionsSearchFacetDisplayContext(
+			GroupLocalService groupLocalService,
 			HttpServletRequest httpServletRequest)
 		throws ConfigurationException {
 
+		_groupLocalService = groupLocalService;
 		_httpServletRequest = httpServletRequest;
 
 		_cpRequestHelper = new CPRequestHelper(httpServletRequest);
 
 		_renderRequest = _cpRequestHelper.getRenderRequest();
+
+		_cpOptionFacetsPortletInstanceConfiguration =
+			ConfigurationProviderUtil.getPortletInstanceConfiguration(
+				CPOptionFacetsPortletInstanceConfiguration.class,
+				_cpRequestHelper.getThemeDisplay());
 	}
+
+	private final CPOptionFacetsPortletInstanceConfiguration _cpOptionFacetsPortletInstanceConfiguration;
 
 	public CPOption getCPOption(long companyId, String fieldName) {
 		String cpOptionKey =
@@ -74,24 +90,86 @@ public class CPOptionsSearchFacetDisplayContext implements Serializable {
 		return name;
 	}
 
+	public boolean getDisplayFrequencies() {
+		return _cpOptionFacetsPortletInstanceConfiguration.displayFrequencies();
+	}
+
+	public int getMaxOptions() {
+		return _cpOptionFacetsPortletInstanceConfiguration.maxOptions();
+	}
+
+	public int getMaxTerms() {
+		return _cpOptionFacetsPortletInstanceConfiguration.maxTerms();
+	}
+
+	public int getFrequencyThreshold() {
+		return _cpOptionFacetsPortletInstanceConfiguration.frequencyThreshold();
+	}
+
+	public String getDisplayStyle() {
+		return _cpOptionFacetsPortletInstanceConfiguration.displayStyle();
+	}
+
 	public long getDisplayStyleGroupId() {
-		if (_displayStyleGroupId != 0) {
+		if (_displayStyleGroupId != null) {
 			return _displayStyleGroupId;
 		}
 
-		long displayStyleGroupId = _DISPLAY_STYLE_GROUP_ID;
+		String displayStyleGroupExternalReferenceCode =
+			_cpOptionFacetsPortletInstanceConfiguration.
+				displayStyleGroupExternalReferenceCode();
 
-		if (displayStyleGroupId <= 0) {
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)_httpServletRequest.getAttribute(
-					WebKeys.THEME_DISPLAY);
+		ThemeDisplay themeDisplay = _cpRequestHelper.getThemeDisplay();
 
-			displayStyleGroupId = themeDisplay.getScopeGroupId();
+		Group group = themeDisplay.getScopeGroup();
+
+		if (Validator.isNotNull(displayStyleGroupExternalReferenceCode)) {
+			group = _groupLocalService.fetchGroupByExternalReferenceCode(
+				displayStyleGroupExternalReferenceCode,
+				themeDisplay.getCompanyId());
 		}
 
-		_displayStyleGroupId = displayStyleGroupId;
+		if (group != null) {
+			_displayStyleGroupId = group.getGroupId();
+		}
+		else {
+			_displayStyleGroupId = themeDisplay.getScopeGroupId();
+		}
 
 		return _displayStyleGroupId;
+	}
+
+	private Long _displayStyleGroupId;
+	private String _displayStyleGroupKey;
+	private final GroupLocalService _groupLocalService;
+
+	public String getDisplayStyleGroupKey() {
+		if (Validator.isNotNull(_displayStyleGroupKey)) {
+			return _displayStyleGroupKey;
+		}
+
+		String displayStyleGroupExternalReferenceCode =
+			_cpOptionFacetsPortletInstanceConfiguration.
+				displayStyleGroupExternalReferenceCode();
+
+		ThemeDisplay themeDisplay = _cpRequestHelper.getThemeDisplay();
+
+		Group group = themeDisplay.getScopeGroup();
+
+		if (Validator.isNotNull(displayStyleGroupExternalReferenceCode)) {
+			group = _groupLocalService.fetchGroupByExternalReferenceCode(
+				displayStyleGroupExternalReferenceCode,
+				themeDisplay.getCompanyId());
+		}
+
+		if (group != null) {
+			_displayStyleGroupKey = group.getGroupKey();
+		}
+		else {
+			_displayStyleGroupKey = StringPool.BLANK;
+		}
+
+		return _displayStyleGroupKey;
 	}
 
 	public List<Facet> getFacets() {
@@ -185,13 +263,10 @@ public class CPOptionsSearchFacetDisplayContext implements Serializable {
 			cpOptionsSearchFacetTermDisplayContext;
 	}
 
-	private static final long _DISPLAY_STYLE_GROUP_ID = 0;
-
 	private CPOptionLocalService _cpOptionLocalService;
 	private List<CPOptionsSearchFacetTermDisplayContext>
 		_cpOptionsSearchFacetTermDisplayContext;
 	private final CPRequestHelper _cpRequestHelper;
-	private long _displayStyleGroupId;
 	private List<Facet> _facets;
 	private final HttpServletRequest _httpServletRequest;
 	private Locale _locale;

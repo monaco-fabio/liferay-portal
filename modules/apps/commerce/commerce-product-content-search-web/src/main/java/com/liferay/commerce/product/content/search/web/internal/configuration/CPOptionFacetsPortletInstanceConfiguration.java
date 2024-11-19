@@ -6,12 +6,10 @@
 package com.liferay.commerce.product.content.search.web.internal.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
-
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
- * @author Marco Leo
  * @author Alessio Antonio Rendina
  */
 @ExtendedObjectClassDefinition(
@@ -19,11 +17,14 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 	scope = ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE
 )
 @Meta.OCD(
-	id = "com.liferay.commerce.product.content.search.web.internal.configuration.CPSearchResultsPortletInstanceConfiguration",
+	id = "com.liferay.commerce.product.content.search.web.internal.configuration.CPOptionFacetsPortletInstanceConfiguration",
 	localization = "content/Language",
-	name = "commerce-product-content-search-web-portlet-instance-configuration-name"
+	name = "commerce-product-option-facets-portlet-instance-configuration-name"
 )
-public interface CPSearchResultsPortletInstanceConfiguration {
+public interface CPOptionFacetsPortletInstanceConfiguration {
+
+	@Meta.AD(deflt = StringPool.TRUE, name = "display-frequencies", required = false)
+	public boolean displayFrequencies();
 
 	@Meta.AD(name = "display-style", required = false)
 	public String displayStyle();
@@ -46,13 +47,13 @@ public interface CPSearchResultsPortletInstanceConfiguration {
 	)
 	public String displayStyleGroupKey();
 
-	@Meta.AD(deflt = StringPool.TRUE, name = "paginate", required = false)
-	public boolean paginate();
+	@Meta.AD(deflt = "10", name = "max-options", required = false)
+	public int maxOptions();
 
-	@Meta.AD(deflt = "15", name = "pagination-delta", required = false)
-	public int paginationDelta();
+	@Meta.AD(deflt = "10", name = "max-terms", required = false)
+	public int maxTerms();
 
-	@Meta.AD(deflt = "custom", name = "selection-style", required = false)
-	public String selectionStyle();
+	@Meta.AD(deflt = "1", name = "frequency-threshold", required = false)
+	public int frequencyThreshold();
 
 }

@@ -16,6 +16,7 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -26,6 +27,7 @@ import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
+import org.osgi.service.component.annotations.Reference;
 
 import java.io.Serializable;
 
@@ -217,12 +219,16 @@ public class CPOptionsSearchFacetDisplayContextBuilder implements Serializable {
 
 		try {
 			return new CPOptionsSearchFacetDisplayContext(
+				_groupLocalService,
 				_portal.getHttpServletRequest(_renderRequest));
 		}
 		catch (ConfigurationException configurationException) {
 			throw new RuntimeException(configurationException);
 		}
 	}
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	private List<Facet> _getFacets() {
 		PortletSharedSearchResponse portletSharedSearchResponse =

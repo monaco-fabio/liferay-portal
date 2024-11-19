@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -63,6 +64,7 @@ public class CPContentPortlet extends MVCPortlet {
 			CPContentConfigurationDisplayContext
 				cpContentConfigurationDisplayContext =
 					new CPContentConfigurationDisplayContext(
+						_groupLocalService,
 						_portal.getHttpServletRequest(renderRequest));
 
 			renderRequest.setAttribute(
@@ -84,6 +86,9 @@ public class CPContentPortlet extends MVCPortlet {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		CPContentPortlet.class);
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private CPContentHelper _cpContentHelper;

@@ -14,10 +14,12 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.liferay.portlet.display.template.portlet.action.BaseConfigurationAction;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -29,7 +31,7 @@ import org.osgi.service.component.annotations.Reference;
 	property = "javax.portlet.name=" + CPPortletKeys.CP_CONTENT_WEB,
 	service = ConfigurationAction.class
 )
-public class CPContentConfigurationAction extends DefaultConfigurationAction {
+public class CPContentConfigurationAction extends BaseConfigurationAction {
 
 	@Override
 	public String getJspPath(HttpServletRequest httpServletRequest) {
@@ -37,7 +39,7 @@ public class CPContentConfigurationAction extends DefaultConfigurationAction {
 			CPContentConfigurationDisplayContext
 				cpContentConfigurationDisplayContext =
 					new CPContentConfigurationDisplayContext(
-						httpServletRequest);
+						_groupLocalService, httpServletRequest);
 
 			httpServletRequest.setAttribute(
 				WebKeys.PORTLET_DISPLAY_CONTEXT,
@@ -55,6 +57,9 @@ public class CPContentConfigurationAction extends DefaultConfigurationAction {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		CPContentConfigurationAction.class);
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private CPContentHelper _cpContentHelper;
