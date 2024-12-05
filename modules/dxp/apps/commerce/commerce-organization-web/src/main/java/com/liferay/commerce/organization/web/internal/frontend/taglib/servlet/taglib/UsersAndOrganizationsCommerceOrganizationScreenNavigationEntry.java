@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.OrganizationLocalService;
 import com.liferay.portal.kernel.service.OrganizationService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -73,8 +74,8 @@ public class UsersAndOrganizationsCommerceOrganizationScreenNavigationEntry
 			CommerceOrganizationDisplayContext
 				commerceOrganizationDisplayContext =
 					new CommerceOrganizationDisplayContext(
-						httpServletRequest, _organizationService,
-						_userLocalService);
+						httpServletRequest, _organizationLocalService,
+						_organizationService, _userLocalService);
 
 			commerceOrganizationDisplayContext.setAdminPortlet(true);
 
@@ -99,6 +100,9 @@ public class UsersAndOrganizationsCommerceOrganizationScreenNavigationEntry
 
 	@Reference
 	private Language _language;
+
+	@Reference
+	private OrganizationLocalService _organizationLocalService;
 
 	@Reference
 	private OrganizationService _organizationService;

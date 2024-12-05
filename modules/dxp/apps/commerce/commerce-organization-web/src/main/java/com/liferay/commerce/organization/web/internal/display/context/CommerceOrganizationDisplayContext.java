@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletQName;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.OrganizationLocalService;
 import com.liferay.portal.kernel.service.OrganizationService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.permission.OrganizationPermissionUtil;
@@ -41,10 +42,12 @@ public class CommerceOrganizationDisplayContext {
 
 	public CommerceOrganizationDisplayContext(
 			HttpServletRequest httpServletRequest,
+			OrganizationLocalService organizationLocalService,
 			OrganizationService organizationService,
 			UserLocalService userLocalService)
 		throws PortalException {
 
+		_organizationLocalService = organizationLocalService;
 		_organizationService = organizationService;
 		_userLocalService = userLocalService;
 
@@ -172,9 +175,28 @@ public class CommerceOrganizationDisplayContext {
 			GetterUtil.getLong(rootOrganizationIdString));
 	}
 
-	public String getRootOrganizationId() {
-		return _commerceOrganizationPortletInstanceConfiguration.
-			rootOrganizationId();
+	public String getRootOrganizationId() throws PortalException {
+		Organization organization = null;
+
+		String rootOrganizationExternalReferenceCode =
+			_commerceOrganizationPortletInstanceConfiguration.
+				rootOrganizationExternalReferenceCode();
+
+		if(Validator.isNotNull(rootOrganizationExternalReferenceCode)) {
+			organization = _organizationLocalService.fetchOrganizationByExternalReferenceCode(
+				rootOrganizationExternalReferenceCode, _themeDisplay.getCompanyId()
+			);
+		}
+
+		if((organization != null) &&
+		   OrganizationPermissionUtil.contains(
+			   _themeDisplay.getPermissionChecker(), organization,
+			   ActionKeys.VIEW)) {
+
+			return String.valueOf(organization.getOrganizationId());
+		}
+
+		return StringPool.BLANK;
 	}
 
 	public User getSelectedUser() throws PortalException {
@@ -243,6 +265,7 @@ public class CommerceOrganizationDisplayContext {
 	private final CommerceOrganizationRequestHelper
 		_commerceOrganizationRequestHelper;
 	private String _keywords;
+	private final OrganizationLocalService _organizationLocalService;
 	private final OrganizationService _organizationService;
 	private final ThemeDisplay _themeDisplay;
 	private final UserLocalService _userLocalService;
