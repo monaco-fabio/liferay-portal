@@ -207,6 +207,7 @@ const Body = ({
 	selectionType?: string;
 }) => {
 	const {itemsChanges, updateItem} = useContext(FrontendDataSetContext);
+	const [menuActive, setMenuActive] = useState(false);
 
 	const SelectionComponent =
 		selectionType === 'multiple' ? ClayCheckbox : ClayRadio;
@@ -264,6 +265,12 @@ const Body = ({
 																}
 																itemData={item}
 																itemId={id}
+																menuActive={
+																	menuActive
+																}
+																onMenuActiveChange={
+																	setMenuActive
+																}
 															/>
 														)
 													)}
