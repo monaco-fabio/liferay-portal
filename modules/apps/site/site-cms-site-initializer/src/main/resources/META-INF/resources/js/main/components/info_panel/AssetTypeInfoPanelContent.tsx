@@ -18,7 +18,6 @@ import '../../../../css/components/AssetTypeInfoPanel.scss';
 import {getBaseAssetInfo} from "./util";
 import {
     ASSET_DATA,
-    ASSETS_LENGTH,
 } from "./util/eventsDefinitions";
 
 const AssetTypeInfoPanelContent = () => {

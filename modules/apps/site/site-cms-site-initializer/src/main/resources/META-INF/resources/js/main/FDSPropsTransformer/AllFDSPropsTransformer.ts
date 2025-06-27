@@ -76,12 +76,12 @@ export default function AllFDSPropsTransformer({
 
 			return action;
 		}),
-		onActionDropdownItemClick: ({action, itemData}) => {
+		onActionDropdownItemClick: ({action, itemData}: {action: any, itemData: []}) => {
 			if (action?.data?.id === 'show-details') {
 				Liferay.fire(ASSET_DATA, {...itemData});
 			}
 		},
-		onSelectedItemsChange: (selectedItems) => {
+		onSelectedItemsChange: (selectedItems: any[]) => {
 			if (selectedItems.length === 1) {
 				Liferay.fire(ASSET_DATA, ...selectedItems);
 			} else if (selectedItems.length > 1 ) {
