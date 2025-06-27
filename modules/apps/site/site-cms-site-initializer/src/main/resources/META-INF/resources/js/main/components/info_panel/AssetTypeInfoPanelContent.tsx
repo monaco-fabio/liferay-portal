@@ -6,31 +6,45 @@
  */
 
 import React, {
-    useContext,
+    useCallback,
     useEffect,
-    useRef,
-    useState
+    useState,
 } from 'react';
 import {Button, SidePanel} from "@clayui/core";
-import {SidePanelContext} from "@clayui/core/lib/side-panel/context";
 import AssetTypeInfoPanelHeader from "./AssetTypeInfoPanelHeader";
 import AssetTypeInfoPanelBody from "./AssetTypeInfoPanelBody";
-
 import {AssetTypeInfoPanelContext} from "./context";
-import {SAMPLE_ASSET_OBJECT} from "./mocks";
-
 import '../../../../css/components/AssetTypeInfoPanel.scss';
 import {getBaseAssetInfo} from "./util";
+import {
+    ASSET_DATA,
+    ASSETS_LENGTH,
+} from "./util/eventsDefinitions";
 
 const AssetTypeInfoPanelContent = () => {
-    const [objectEntry, setObjectEntry] = useState(SAMPLE_ASSET_OBJECT);
+    let assetInfo = {};
+    const [objectEntries, setObjectEntries] = useState([]);
 
-    const assetInfo = getBaseAssetInfo(objectEntry);
+    useEffect(() => {
+        const handler = (objectEntries: any[] = []) => {
+            setObjectEntries(objectEntries as any[]);
+        };
+
+        Liferay.on(ASSET_DATA, handler);
+
+        return () => {
+            Liferay.detach(ASSET_DATA, handler);
+        }
+    })
+
+    if (objectEntries.length === 1) {
+        assetInfo = getBaseAssetInfo(objectEntries[0]);
+    }
 
     return (
         <>
             <AssetTypeInfoPanelContext.Provider value={{
-                objectEntry,
+                objectEntries,
                 ...assetInfo,
             }}>
                 <AssetTypeInfoPanelHeader/>

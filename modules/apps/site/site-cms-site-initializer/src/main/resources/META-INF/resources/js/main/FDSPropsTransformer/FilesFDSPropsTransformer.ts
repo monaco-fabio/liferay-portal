@@ -14,6 +14,11 @@ import SimpleActionLinkRenderer from './cell_renderers/SimpleActionLinkRenderer'
 import SpaceRenderer from './cell_renderers/SpaceRenderer';
 import TypeRenderer from './cell_renderers/TypeRenderer';
 import addOnClickToCreationMenuItems from './utils/addOnClickToCreationMenuItems';
+import AssetTypeInfoPanel
+	from "../components/info_panel/AssetTypeInfoPanelContent";
+import {
+	ASSET_DATA, ASSETS_LENGTH
+} from "../components/info_panel/util/eventsDefinitions";
 
 const ACTIONS = {
 	createAsset: createAssetAction,
@@ -71,6 +76,7 @@ export default function FilesFDSPropsTransformer({
 				} as IInternalRenderer,
 			],
 		},
+		infoPanelComponent: AssetTypeInfoPanel,
 		itemsActions: itemsActions.map((action) => {
 			if (action?.data?.id === 'download') {
 				return {
@@ -92,5 +98,13 @@ export default function FilesFDSPropsTransformer({
 
 			return action;
 		}),
+		onActionDropdownItemClick: ({action, itemData}) => {
+			if (action?.data?.id === 'show-details') {
+				Liferay.fire(ASSET_DATA, [{...itemData}]);
+			}
+		},
+		onSelectedItemsChange: (selectedItems) => {
+			Liferay.fire(ASSET_DATA, selectedItems);
+		},
 	};
 }

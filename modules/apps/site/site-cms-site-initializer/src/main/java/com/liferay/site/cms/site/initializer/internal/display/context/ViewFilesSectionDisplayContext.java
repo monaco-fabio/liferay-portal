@@ -13,6 +13,7 @@ import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.GroupConstants;
@@ -86,6 +87,13 @@ public class ViewFilesSectionDisplayContext extends BaseSectionDisplayContext {
 				HashMapBuilder.<String, Object>put(
 					"entryClassName", ObjectEntryFolder.class.getName()
 				).build()));
+
+		fdsActionDropdownItems.add(
+			3,
+			new FDSActionDropdownItem(
+				StringPool.BLANK, "info-circle-open", "show-details",
+				LanguageUtil.get(httpServletRequest, "show-details"), null, null,
+				"infoPanel"));
 
 		return fdsActionDropdownItems;
 	}

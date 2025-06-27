@@ -4,9 +4,9 @@ interface IAssetTypeSidePanelContext {
     externalReferenceCode?: string | null;
     icon?: string | null;
     id?: number | null;
-    items?: any[] | [];
+    items?: number | null;
     name?: string | null;
-    objectEntry?: any;
+    objectEntries?: any[];
     type?: string | null;
 }
 
@@ -14,10 +14,10 @@ const BASE_CONTEXT: IAssetTypeSidePanelContext = {
     externalReferenceCode: null,
     icon: null,
     id: null,
-    items: [],
+    items: null,
     name: null,
-    objectEntry: null,
-    type: 'files',
+    objectEntries: [],
+    type: null,
 };
 
 export const AssetTypeInfoPanelContext = React.createContext(BASE_CONTEXT);

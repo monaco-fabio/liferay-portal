@@ -1,17 +1,13 @@
-import React, {useContext, useState} from 'react';
-import {AssetTypeInfoPanelContext} from "./context";
+import React, {useState} from 'react';
 import Tabs from "@clayui/tabs";
 import {TABS} from "./tabs_content";
 import {SidePanel} from "@clayui/core";
 
 const AssetTypeInfoPanelFilesView = () => {
-    const {
-        id,
-        externalReferenceCode,
-        type,
-    } = useContext(AssetTypeInfoPanelContext);
 
     const [active, setActive] = useState(0);
+
+    const tabsEntries = Object.entries(TABS);
 
     return (
         <>
@@ -19,7 +15,7 @@ const AssetTypeInfoPanelFilesView = () => {
                 active={active}
                 onActiveChange={setActive}
             >
-                {Object.entries(TABS).map(([key, value], index) => (
+                {tabsEntries.map(([key, value], index) => (
                     <Tabs.Item
                         key={`tab_${key}_${index}`}
                         innerProps={{
@@ -32,10 +28,10 @@ const AssetTypeInfoPanelFilesView = () => {
             </Tabs>
 
             <Tabs.Content active={active} fade>
-                {Object.entries(TABS).map(([key, value], index) => (
+                {tabsEntries.map(([key, Tab], index) => (
                     <Tabs.TabPane key={`pane_${key}_${index}`}>
                         <SidePanel.Body>
-                            <value.component/>
+                            <Tab.component/>
                         </SidePanel.Body>
                     </Tabs.TabPane>
                 ))}

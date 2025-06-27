@@ -13,6 +13,12 @@ import NameRenderer from './cell_renderers/NameRenderer';
 import SimpleActionLinkRenderer from './cell_renderers/SimpleActionLinkRenderer';
 import TypeRenderer from './cell_renderers/TypeRenderer';
 import addOnClickToCreationMenuItems from './utils/addOnClickToCreationMenuItems';
+import AssetTypeInfoPanel
+	from "../components/info_panel/AssetTypeInfoPanelContent";
+import {
+	ASSET_DATA,
+	ASSETS_LENGTH
+} from "../components/info_panel/util/eventsDefinitions";
 
 const ACTIONS = {
 	createAsset: createAssetAction,
@@ -65,6 +71,7 @@ export default function FolderFDSPropsTransformer({
 				} as IInternalRenderer,
 			],
 		},
+		infoPanelComponent: AssetTypeInfoPanel,
 		itemsActions: itemsActions.map((action) => {
 			if (action?.data?.id === 'download') {
 				return {
@@ -86,5 +93,17 @@ export default function FolderFDSPropsTransformer({
 
 			return action;
 		}),
+		onActionDropdownItemClick: ({action, itemData}) => {
+			if (action?.data?.id === 'show-details') {
+				Liferay.fire(ASSET_DATA, {...itemData});
+			}
+		},
+		onSelectedItemsChange: (selectedItems) => {
+			if (selectedItems.length === 1) {
+				Liferay.fire(ASSET_DATA, ...selectedItems);
+			} else if (selectedItems.length > 1 ) {
+				Liferay.fire(ASSETS_LENGTH, selectedItems.length)
+			}
+		},
 	};
 }

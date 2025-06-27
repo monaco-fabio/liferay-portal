@@ -5,7 +5,7 @@
 
 export const ASSET_TYPE = {
     CONTENTS: 'contents',
-    EMPTY: 'empty',
+    EMPTY: null || undefined,
     FILES: 'files',
     FOLDER: 'folder',
     MULTIPLE: 'multiple',

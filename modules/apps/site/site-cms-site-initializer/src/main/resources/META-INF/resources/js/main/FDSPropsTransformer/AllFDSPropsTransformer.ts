@@ -13,6 +13,9 @@ import SpaceRenderer from './cell_renderers/SpaceRenderer';
 import TypeRenderer from './cell_renderers/TypeRenderer';
 import addOnClickToCreationMenuItems from './utils/addOnClickToCreationMenuItems';
 import AssetTypeInfoPanel from '../components/info_panel/AssetTypeInfoPanelContent';
+import {
+	ASSET_DATA, ASSETS_LENGTH,
+} from "../components/info_panel/util/eventsDefinitions";
 
 const ACTIONS = {
 	createAsset: createAssetAction,
@@ -73,13 +76,17 @@ export default function AllFDSPropsTransformer({
 
 			return action;
 		}),
-		onActionDropdownItemClick: (...args) => {
-			console.log({args});
-			// if (action?.data?.id === 'show-details') {
-				// console.log('show-details', {itemData});
-			// }
+		onActionDropdownItemClick: ({action, itemData}) => {
+			if (action?.data?.id === 'show-details') {
+				Liferay.fire(ASSET_DATA, {...itemData});
+			}
 		},
-		onBulkActionItemClick: () => {},
-		onInfoPanelToggleButtonClick: () => {},
+		onSelectedItemsChange: (selectedItems) => {
+			if (selectedItems.length === 1) {
+				Liferay.fire(ASSET_DATA, ...selectedItems);
+			} else if (selectedItems.length > 1 ) {
+				Liferay.fire(ASSETS_LENGTH, selectedItems.length)
+			}
+		},
 	};
 }

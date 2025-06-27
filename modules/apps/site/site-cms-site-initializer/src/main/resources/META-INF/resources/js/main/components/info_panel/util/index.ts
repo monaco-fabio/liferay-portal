@@ -1,11 +1,11 @@
 
 
 export function getBaseAssetInfo({
-    embedded: {
-        title,
-        objectEntryFolderExternalReferenceCode = ''
-    },
-    entryClassName = '',
+       embedded: {
+            title,
+            objectEntryFolderExternalReferenceCode = ''
+        },
+        entryClassName = '',
 }: any) {
     const baseAssetInfo: any = {name: title};
 
