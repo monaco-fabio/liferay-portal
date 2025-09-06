@@ -12,6 +12,7 @@ import formatActionURL from '../../common/utils/formatActionURL';
 import {ISearchAssetObjectEntry} from '../../structure_builder/types/AssetType';
 import DefaultPermissionModalContent from '../default_permission/DefaultPermissionModalContent';
 import AssetTypeInfoPanel from '../info_panel/AssetTypeInfoPanelContent';
+import CategoriesAndTagsModalContent from '../modal/CategoriesAndTagsModalContent';
 import FilePreviewerModalContent from '../modal/FilePreviewerModalContent';
 import createAssetAction from './actions/createAssetAction';
 import createFolderAction from './actions/createFolderAction';
@@ -258,7 +259,26 @@ export default function AssetsFDSPropsTransformer({
 			action: any;
 			selectedData: any;
 		}) => {
-			if (action?.data?.id === 'delete') {
+			if (action?.data?.id === 'categoriesAndTags') {
+				openModal({
+					center: true,
+					containerProps: {
+						className: 'modal-height-lg',
+					},
+					contentComponent: ({
+						closeModal,
+					}: {
+						closeModal: () => void;
+					}) =>
+						CategoriesAndTagsModalContent({
+							closeModal,
+							cmsGroupId: additionalProps.cmsGroupId as number,
+							selectedData,
+						}),
+					size: 'md',
+				});
+			}
+			else if (action?.data?.id === 'delete') {
 				deleteAssetEntriesBulkAction({
 					actionId: action.data.id,
 					selectedData,
