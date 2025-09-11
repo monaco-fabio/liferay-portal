@@ -33,33 +33,33 @@ describe('TaskStatusManager', () => {
 		jest.resetAllMocks();
 	});
 
-	describe('with processing tasks', () => {
-		it('renders correctly for a single task', () => {
+	describe('with processing taskItems', () => {
+		it('renders correctly for a single id', () => {
 			const {getByText, queryByRole} = render(
 				<TaskStatusManager {...MOCKED_TASK} totalCount={1} />
 			);
 
 			expect(getByText('1')).toBeInTheDocument();
-			expect(getByText('processing-task')).toBeInTheDocument();
+			expect(getByText('processing-id')).toBeInTheDocument();
 			expect(
 				queryByRole('button', {name: 'close'})
 			).not.toBeInTheDocument();
 		});
 
-		it('renders correctly for multiple tasks', () => {
+		it('renders correctly for multiple taskItems', () => {
 			const {getByText, queryByRole} = render(
 				<TaskStatusManager {...MOCKED_TASK} />
 			);
 
 			expect(getByText('5')).toBeInTheDocument();
-			expect(getByText('processing-tasks')).toBeInTheDocument();
+			expect(getByText('processing-taskItems')).toBeInTheDocument();
 			expect(
 				queryByRole('button', {name: 'close'})
 			).not.toBeInTheDocument();
 		});
 	});
 
-	describe('with no processing tasks', () => {
+	describe('with no processing taskItems', () => {
 		it('renders nothing at start', () => {
 			const {queryByRole} = render(<TaskStatusManager />);
 

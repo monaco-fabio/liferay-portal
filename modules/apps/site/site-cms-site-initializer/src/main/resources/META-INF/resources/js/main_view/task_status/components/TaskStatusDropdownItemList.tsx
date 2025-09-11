@@ -10,7 +10,11 @@ import ClayPanel from '@clayui/panel';
 import {sub} from 'frontend-js-web';
 import React from 'react';
 
-import {COMPLETED, ITask, STATUS_PROPERTIES} from '../TaskStatusType';
+import {
+	COMPLETED,
+	IBulkActionTaskItem,
+	STATUS_PROPERTIES
+} from '../TaskStatusType';
 
 import '../../../../css/components/AssetTaskStatus.scss';
 
@@ -21,9 +25,9 @@ function TaskStatusDropdownItemList({items}: any) {
 		<>
 			<DropDown.ItemList className="task-status" items={items}>
 				{(rawTask: unknown) => {
-					const {taskResult = COMPLETED, ...task} = rawTask as ITask;
+					const {taskResult = COMPLETED, ...task} = rawTask as IBulkActionTaskItem;
 
-					const properties = STATUS_PROPERTIES[taskResult];
+					const properties = STATUS_PROPERTIES[task.executionStatus];
 
 					return (
 						<ClayPanel
@@ -54,7 +58,7 @@ function TaskStatusDropdownItemList({items}: any) {
 													Liferay.Language.get(
 														'x-items'
 													),
-													[task.taskItems]
+													[task.numberOfItems]
 												)}
 											</p>
 
@@ -76,7 +80,7 @@ function TaskStatusDropdownItemList({items}: any) {
 												}
 											>
 												{Liferay.Language.get(
-													taskResult
+													properties.label
 												)}
 											</Label>
 										</p>

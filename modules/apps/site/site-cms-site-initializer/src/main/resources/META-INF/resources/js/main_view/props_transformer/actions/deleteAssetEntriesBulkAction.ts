@@ -63,7 +63,7 @@ export default function deleteAssetEntriesBulkAction({
 				displayType: 'danger',
 				label: Liferay.Language.get('delete'),
 				onClick: ({processClose}) => {
-					Liferay.fire(START_TASK, {actionId, selectedData});
+					Liferay.fire(START_TASK, {actionId: "DeleteBulkAction", selectedData});
 
 					processClose();
 				},
