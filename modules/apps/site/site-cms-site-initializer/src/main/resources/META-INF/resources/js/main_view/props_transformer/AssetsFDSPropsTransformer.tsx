@@ -274,6 +274,7 @@ export default function AssetsFDSPropsTransformer({
 							closeModal,
 							cmsGroupId: additionalProps.cmsGroupId as number,
 							selectedData,
+							...otherProps
 						}),
 					size: 'md',
 				});
@@ -282,12 +283,14 @@ export default function AssetsFDSPropsTransformer({
 				deleteAssetEntriesBulkAction({
 					actionId: action.data.id,
 					selectedData,
+					...otherProps
 				});
 			}
 			else if (action?.data?.id === 'download') {
 				Liferay.fire(START_TASK, {
 					actionId: action.data.id,
 					selectedData,
+					...otherProps
 				});
 			}
 		},

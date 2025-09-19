@@ -11,6 +11,7 @@ import {sub} from 'frontend-js-web';
 import React from 'react';
 
 import {
+	ActionId,
 	COMPLETED,
 	IBulkActionTaskItem,
 	STATUS_PROPERTIES
@@ -19,6 +20,7 @@ import {
 import '../../../../css/components/AssetTaskStatus.scss';
 
 import moment from 'moment';
+import handleMessageAndName from "../util/HandleMessageAndName";
 
 function TaskStatusDropdownItemList({items}: any) {
 	return (
@@ -26,6 +28,8 @@ function TaskStatusDropdownItemList({items}: any) {
 			<DropDown.ItemList className="task-status" items={items}>
 				{(rawTask: unknown) => {
 					const {taskResult = COMPLETED, ...task} = rawTask as IBulkActionTaskItem;
+
+					const {name} = handleMessageAndName(task.actionName as ActionId)
 
 					const properties = STATUS_PROPERTIES[task.executionStatus];
 
@@ -48,7 +52,7 @@ function TaskStatusDropdownItemList({items}: any) {
 									<div className="task-status-item-text">
 										<p className="h5 m-0 mr-1">
 											{Liferay.Language.get(
-												task.actionName
+												name
 											)}
 										</p>
 
@@ -92,14 +96,7 @@ function TaskStatusDropdownItemList({items}: any) {
 						>
 							<ClayPanel.Body className="d-flex">
 								<Button
-									className="btn-xs"
-									displayType="success"
-								>
-									{Liferay.Language.get('dismiss')}
-								</Button>
-
-								<Button
-									className="border-success btn-xs text-success"
+									className={properties.viewButtonClassName}
 									displayType="secondary"
 								>
 									{Liferay.Language.get('view')}

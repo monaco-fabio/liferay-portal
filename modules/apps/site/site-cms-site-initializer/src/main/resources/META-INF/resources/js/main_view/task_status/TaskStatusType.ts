@@ -7,20 +7,69 @@ import ClayIcon from '@clayui/icon';
 import LoadingIndicator from '@clayui/loading-indicator';
 import React from 'react';
 
+export const COMPLETED = 'COMPLETED';
+export const FAILED = 'FAILED';
+export const STARTED = 'STARTED';
+
+export interface IBulkAction {
+	"DeleteBulkAction" : {},
+	"KeywordBulkAction": {
+		keywords: string[];
+	},
+	"MoveBulkAction": {
+		objectEntryFolderId: number;
+	},
+	"PermissionBulkAction": {
+		permission: IBulkActionPermission[];
+	},
+	"StatusBulkAction": {
+		status: number;
+	},
+	"TaxonomyCategoryBulkAction": {
+		taxonomyCategoryIds: number[];
+	}
+}
+
+interface IBulkActionItem {
+	classExternalReferenceCode: string;
+	className: string;
+	classPK: number;
+	name: string;
+}
+
+interface IBulkActionBaseBody {
+	bulkActionItems: IBulkActionItem[];
+	filters?: [];
+	searchQuery?: string;
+	selectAll: boolean;
+}
+
+export type BulkActionDataDTO = {
+	keywords?: string[];
+	objectEntryFolderId?: number;
+	permission?: IBulkActionPermission[];
+	status?: string;
+	taxonomyCategoryIds?: number[];
+}
+
+export interface IBulkActionPermission {
+	actionIds: string;
+	roleExternalReferenceCode: string;
+	roleName: string;
+	roleType: string;
+}
+
 export interface IBulkActionSelectedData {
 	items: IBulkActionSelectedDataItem[];
-	keywords?: string;
-	objectEntryFolderId?: number;
-	permission?: [{
-		actionIds: string;
-		roleExternalReferenceCode: string;
-		roleName: string;
-		roleType: string;
-	}]
+	filter: [];
+	keywords: [];
+	objectEntryFolderId: number;
+	permission: IBulkActionPermission[];
 	selectAll: boolean;
-	status?: number;
-	taxonomyCategoryIds?: [];
-	type: string;
+	status: number;
+	searchQuery: string;
+	taxonomyCategoryIds: [];
+	type: ActionId;
 }
 
 export interface IBulkActionSelectedDataItem {
@@ -50,9 +99,13 @@ export interface IBulkActionTaskItem {
 	totalCount: number;
 }
 
-export const COMPLETED = 'COMPLETED';
-export const FAILED = 'FAILED';
-export const STARTED = 'STARTED';
+export type ActionId = keyof IBulkAction;
+
+type BulkActionPropByActionType<T extends keyof IBulkAction> = IBulkAction[T];
+
+export type BulkActionPostDTO<T extends keyof IBulkAction> = IBulkActionBaseBody & {
+	type: T,
+} & BulkActionPropByActionType<T>
 
 export const STATUS_PROPERTIES: Record<string, TStatusProperties> = {
 	[COMPLETED]: {
@@ -61,6 +114,7 @@ export const STATUS_PROPERTIES: Record<string, TStatusProperties> = {
 		iconClassName: 'text-success',
 		label: 'completed',
 		labelDisplayType: 'success',
+		viewButtonClassName: 'border-success btn-xs text-success'
 	},
 	[FAILED]: {
 		component: ClayIcon,
@@ -68,6 +122,7 @@ export const STATUS_PROPERTIES: Record<string, TStatusProperties> = {
 		iconClassName: 'text-danger',
 		label: 'failed',
 		labelDisplayType: 'danger',
+		viewButtonClassName: 'border-danger btn-xs text-danger'
 	},
 	[STARTED]: {
 		component: LoadingIndicator,
@@ -75,6 +130,7 @@ export const STATUS_PROPERTIES: Record<string, TStatusProperties> = {
 		iconClassName: 'loading-animation',
 		label: 'processing',
 		labelDisplayType: 'info',
+		viewButtonClassName: 'border-info btn-xs text-info'
 	},
 };
 
@@ -85,4 +141,5 @@ export type TStatusProperties = {
 	iconClassName: string;
 	label: string;
 	labelDisplayType: 'danger' | 'info' | 'success';
+	viewButtonClassName: string;
 };

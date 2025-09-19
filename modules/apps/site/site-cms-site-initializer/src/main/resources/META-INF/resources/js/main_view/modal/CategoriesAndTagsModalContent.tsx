@@ -12,15 +12,20 @@ import React, {useCallback, useState} from 'react';
 import AssetCategories from '../info_panel/components/AssetCategories';
 import AssetTags from '../info_panel/components/AssetTags';
 import {EntryCategorizationDTO} from '../info_panel/services/ObjectEntryService';
+import {
+	START_TASK
+} from "../../common/utils/events";
 
 export default function CategoriesAndTagsModalContent({
 	closeModal,
 	cmsGroupId,
 	selectedData,
+	...otherProps
 }: {
 	closeModal: () => void;
 	cmsGroupId: number;
 	selectedData: any;
+	otherProps: any;
 }) {
 	const [categorizationDTO, setCategorizationDTO] =
 		useState<EntryCategorizationDTO>({
@@ -31,6 +36,30 @@ export default function CategoriesAndTagsModalContent({
 
 	const doBulkSubmit = useCallback(async () => {
 		closeModal();
+
+		if (categorizationDTO.keywords?.length) {
+			Liferay.fire(
+				START_TASK,
+				{
+					actionId: "KeywordBulkAction",
+					data: categorizationDTO.keywords,
+					selectedData,
+					otherProps,
+				}
+			);
+		}
+
+		if (categorizationDTO.taxonomyCategoryIds?.length) {
+			Liferay.fire(
+				START_TASK,
+				{
+					actionId: "TaxonomyCategoryBulkAction",
+					data: categorizationDTO.taxonomyCategoryIds,
+					selectedData,
+					otherProps,
+				}
+			);
+		}
 	}, [categorizationDTO, selectedData]);
 
 	const updateLocalObjectEntry = useCallback(

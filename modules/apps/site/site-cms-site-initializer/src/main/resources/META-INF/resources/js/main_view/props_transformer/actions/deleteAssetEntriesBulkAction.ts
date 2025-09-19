@@ -36,9 +36,11 @@ function getBulkDeleteMessage(selectedData: any) {
 export default function deleteAssetEntriesBulkAction({
 	actionId,
 	selectedData,
+	...otherProps
 }: {
 	actionId: string;
 	selectedData: any;
+	otherProps: any;
 }) {
 	const {confirmationMessage, title} = getBulkDeleteMessage(selectedData);
 
@@ -63,7 +65,7 @@ export default function deleteAssetEntriesBulkAction({
 				displayType: 'danger',
 				label: Liferay.Language.get('delete'),
 				onClick: ({processClose}) => {
-					Liferay.fire(START_TASK, {actionId: "DeleteBulkAction", selectedData});
+					Liferay.fire(START_TASK, {actionId: "DeleteBulkAction", selectedData, ...otherProps});
 
 					processClose();
 				},

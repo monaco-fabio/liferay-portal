@@ -8,17 +8,19 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import '../../../css/components/AssetTaskStatus.scss';
 
 import {
+    ActionId, BulkActionDataDTO,
     IBulkActionSelectedData,
     IBulkActionTaskItem,
 } from './TaskStatusType';
-import {START_TASK} from '../../common/utils/events';
 import {sub} from 'frontend-js-web';
 import TaskStatusDropdown from "./components/TaskStatusDropdown";
-import {BULK_ACTION_TYPE} from "./util";
 import BulkActionService from "./services/BulkActionService";
+import {START_TASK} from "../../common/utils/events";
+import handleMessageAndName from "./util/HandleMessageAndName";
+import generateUrlParams from "./util/GenerateUrlParams";
 
 function TaskStatusManager() {
-    const [active, setActive] = useState(false);
+    const [active, setActive] = useState<boolean>(false);
     const intervalRef = React.useRef<ReturnType<typeof setInterval> | null>(
         null);
     const updateOpenDropdownRef = useRef(false);
@@ -27,14 +29,14 @@ function TaskStatusManager() {
     const [taskItems, setTaskItems] = useState<IBulkActionTaskItem[]>([]);
 
     const getTaskItems = useCallback(async () => {
-		const tasks = await BulkActionService.getTasks(
+        const tasks = await BulkActionService.getTasks(
             {
                 pageSize: 5,
                 sort: "dateCreated:desc",
             }
         );
 
-		setTaskItems(tasks?.items || []);
+        setTaskItems(tasks?.items || []);
     }, []);
 
     const stopPolling = useCallback(() => {
@@ -51,12 +53,10 @@ function TaskStatusManager() {
             return;
         }
 
-        const poller = async () => {
+        const pollingTasks = async () => {
             try {
-                const tasks=  await BulkActionService.getTasks(
-                    {
-                        filter: `executionStatus eq 'STARTED'`
-                    }
+                const tasks = await BulkActionService.getTasks(
+                    {filter: `executionStatus eq 'STARTED'`}
                 );
 
                 if (tasks?.totalCount === 0) {
@@ -68,51 +68,59 @@ function TaskStatusManager() {
                 }
                 setProcessingTask(tasks?.totalCount || 0);
             }
-            catch (error) {
+            catch {
                 stopPolling();
             }
         };
 
-        poller();
-        intervalRef.current = setInterval(poller, TIMEOUT);
+        pollingTasks();
+        intervalRef.current = setInterval(pollingTasks, TIMEOUT);
     }, [getTaskItems, stopPolling]);
 
     const postBulkAction = useCallback(
-        async ({actionId, selectedData}:
+        async ({actionId, data, selectedData, ...otherProps}:
                {
-                   actionId: string,
-                   selectedData: IBulkActionSelectedData
+                   actionId: ActionId,
+                   data: BulkActionDataDTO,
+                   otherProps: any,
+                   selectedData: IBulkActionSelectedData,
                }
         ) => {
-            const action = BULK_ACTION_TYPE[actionId];
+            const urlParams = generateUrlParams(selectedData, otherProps);
 
-            const body = {
-                bulkActionItems: selectedData.items.map((item: any) => ({
-                    classExternalReferenceCode:
-                    item.embedded.externalReferenceCode,
-                    className: item.entryClassName,
-                    classPK: item.embedded.id,
-                    name: item.embedded.title,
-                })),
-                selectAll: selectedData.selectAll,
-                type: actionId,
-            };
+            try {
+                const response = await BulkActionService.createTask(
+                    actionId, selectedData, data, urlParams
+                );
 
-            const response = await BulkActionService.createTask(
-                body
-            );
+                const {infoMessage} = handleMessageAndName(
+                    actionId, selectedData);
 
-            if (response.data) {
-                Liferay.Util.openToast({
-                    message: sub(
-                        Liferay.Language.get('x-x-items'),
-                        [selectedData.items.length]
-                    ),
-                    type: 'info'
-                });
+                if (response.data) {
+                    Liferay.Util.openToast({
+                        message: sub(
+                            infoMessage,
+                            [
+                                selectedData.items.length,
+                                ""
+                            ]
+                        ),
+                        type: 'info'
+                    });
+
+                    retryStrategy();
+                }
+
+                if (response.error) {
+                    Liferay.Util.openToast({
+                        message: Liferay.Language.get(
+                            'an-unexpected-system-error-occurred'
+                        ),
+                        type: 'danger',
+                    });
+                }
             }
-
-            if (response.error) {
+            catch {
                 Liferay.Util.openToast({
                     message: Liferay.Language.get(
                         'an-unexpected-system-error-occurred'
@@ -120,8 +128,6 @@ function TaskStatusManager() {
                     type: 'danger',
                 });
             }
-
-            retryStrategy();
         }, [retryStrategy]);
 
     useEffect(() => {
@@ -134,14 +140,16 @@ function TaskStatusManager() {
         };
     }, [postBulkAction, stopPolling]);
 
-    useEffect(() => {
-        if (processingTasks > 0) {
+   useEffect(() => {
+        if(taskItems.length || processingTasks > 0) {
             setIsVisible(true);
         }
-    }, [processingTasks, setIsVisible]);
+    }, [processingTasks, setIsVisible, taskItems]);
 
     useEffect(() => {
-        updateOpenDropdownRef.current = active;
+        if (active) {
+            updateOpenDropdownRef.current = active;
+        }
     }, [active]);
 
     return (
