@@ -12,6 +12,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.upgrade.UpgradeStep;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.elasticsearch8.configuration.ElasticsearchConfiguration;
@@ -59,6 +60,10 @@ public class ElasticsearchConfigurationUpgradeProcess extends UpgradeProcess {
 			properties.remove("operationMode"));
 
 		if (StringUtil.equals(operationMode, "REMOTE")) {
+			if (_log.isWarnEnabled()) {
+				_log.warn("The operationMode property is no longer supported");
+			}
+
 			properties.put("productionModeEnabled", Boolean.TRUE);
 		}
 
@@ -90,8 +95,8 @@ public class ElasticsearchConfigurationUpgradeProcess extends UpgradeProcess {
 			return;
 		}
 
-		if (_log.isInfoEnabled()) {
-			_log.info(
+		if (_log.isWarnEnabled()) {
+			_log.warn(
 				"Elasticsearch 7 configuration detected. Attempting to " +
 					"migrate properties to Elasticsearch 8. Manual updates " +
 						"to the configuration may be required.");
@@ -143,6 +148,24 @@ public class ElasticsearchConfigurationUpgradeProcess extends UpgradeProcess {
 				ElasticsearchConnectionConfiguration.class.getName());
 
 		upgradeStep.upgrade();
+
+		String filterString = String.format(
+			"(&(service.factoryPid=%s)(active=%s))",
+			ElasticsearchConnectionConfiguration.class.getName(), true);
+
+		Configuration[] configurations = _configurationAdmin.listConfigurations(
+			filterString);
+
+		if (ArrayUtil.isEmpty(configurations)) {
+			return;
+		}
+
+		for (Configuration configuration : configurations) {
+			Dictionary<String, Object> elasticsearch8properties =
+				configuration.getProperties();
+
+			configuration.update(elasticsearch8properties);
+		}
 	}
 
 	private static final String _CLASS_NAME_ELASTICSEARCH_CONFIGURATION =

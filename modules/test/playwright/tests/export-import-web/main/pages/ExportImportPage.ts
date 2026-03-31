@@ -211,6 +211,20 @@ export class ExportImportPage {
 		});
 	}
 
+	async checkAllPortlets() {
+		const portletListContainer = this.portletListContainer;
+
+		await portletListContainer.waitFor({state: 'attached'});
+
+		const checkBoxes = portletListContainer.locator(
+			'input[type="checkbox"]:visible'
+		);
+
+		for (const checkbox of await checkBoxes.all()) {
+			await checkbox.check();
+		}
+	}
+
 	async uncheckPortlets() {
 		const portletListContainer = this.portletListContainer;
 
@@ -227,11 +241,13 @@ export class ExportImportPage {
 
 	async export({
 		dateFilter,
+		exportAllPortlets = false,
 		includePermissions = false,
 		portletLabels,
 		taskName = `Export-${getRandomString()}`,
 	}: {
 		dateFilter?: DateFilter;
+		exportAllPortlets?: boolean;
 		includePermissions?: boolean;
 		portletLabels?: string[];
 		taskName?: string;
@@ -240,7 +256,10 @@ export class ExportImportPage {
 
 		await this.title.fill(taskName);
 
-		if (portletLabels) {
+		if (exportAllPortlets) {
+			await this.checkAllPortlets();
+		}
+		else if (portletLabels) {
 			await this.uncheckPortlets();
 
 			for (const portletLabel of portletLabels) {
@@ -391,9 +410,15 @@ export class ExportImportPage {
 
 		for (const itemLocator of await itemsLocator.all()) {
 			const title = await itemLocator.locator('strong').textContent();
-			const countText = await itemLocator
-				.locator('.staging-taglib-checkbox-items')
-				.textContent();
+			const countLocator = itemLocator.locator(
+				'.staging-taglib-checkbox-items'
+			);
+
+			if ((await countLocator.count()) === 0) {
+				continue;
+			}
+
+			const countText = await countLocator.textContent();
 
 			const countMatch = countText ? countText.match(/\d+/) : null;
 

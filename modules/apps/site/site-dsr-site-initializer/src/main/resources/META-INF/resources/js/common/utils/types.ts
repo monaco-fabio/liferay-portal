@@ -22,6 +22,27 @@ export interface IAccounts {
 	totalCount: number;
 }
 
+export interface IEngagementChartItem {
+	date: string;
+	numberOfVisits: number;
+	timeSpent: number;
+}
+
+export interface IEngagementChartProps {
+	engagementChartItems?: IEngagementChartItem[] | null;
+	isLoading?: boolean;
+}
+
+export interface IFrequencyChartItem {
+	frequencyType: string;
+	visitCount: number;
+}
+
+export interface IFrequencyChartProps {
+	frequencyChartItems?: IFrequencyChartItem[] | null;
+	isLoading?: boolean;
+}
+
 export interface IInvitedMember {
 	emailAddress: string;
 	id: number;
@@ -117,6 +138,7 @@ export interface IRoomObjectEntry {
 		label: string;
 		label_i18n: string;
 	};
+	trend: number;
 }
 
 export interface IRoomShareProps {

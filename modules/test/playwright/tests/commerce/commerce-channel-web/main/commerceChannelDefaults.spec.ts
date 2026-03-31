@@ -58,10 +58,14 @@ test('LPD-26142 A Sales Agent can manage channel defaults', async ({
 		rolePermissions: [
 			{
 				actionIds: [
+					'ADD_USER',
+					'ASSIGN_USERS',
+					'INVITE_USER',
 					'MANAGE_ORGANIZATIONS',
-					'MANAGE_USERS',
 					'MANAGE_CHANNEL_DEFAULTS',
+					'UNASSIGN_USERS',
 					'UPDATE',
+					'UPDATE_USERS',
 				],
 				primaryKey: companyId,
 				resourceName: 'com.liferay.account.model.AccountEntry',

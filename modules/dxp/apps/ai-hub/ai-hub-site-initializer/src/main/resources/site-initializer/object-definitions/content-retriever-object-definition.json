@@ -1,16 +1,16 @@
 {
 	"accountEntryRestricted": true,
-	"accountEntryRestrictedObjectFieldName": "r_accountToAIHubCrawlTargets_accountEntryId",
+	"accountEntryRestrictedObjectFieldName": "r_accountToAIHubContentRetrievers_accountEntryId",
 	"className": "com.liferay.object.model.ObjectDefinition#M1W1",
 	"enableFormContainer": false,
 	"enableIndexSearch": true,
-	"externalReferenceCode": "L_AI_HUB_CRAWL_TARGET",
+	"externalReferenceCode": "L_AI_HUB_CONTENT_RETRIEVER",
 	"friendlyURLSeparator": "l",
 	"label": {
-		"en_US": "Crawl Target"
+		"en_US": "Content Retriever"
 	},
 	"modifiable": true,
-	"name": "AIHubCrawlTarget",
+	"name": "AIHubContentRetriever",
 	"objectActions": [
 	],
 	"objectDefinitionSettings": [
@@ -44,7 +44,6 @@
 			],
 			"readOnly": "false",
 			"readOnlyConditionExpression": "",
-			"required": true,
 			"system": true,
 			"type": "Clob"
 		},
@@ -62,7 +61,6 @@
 			"objectFieldSettings": [
 			],
 			"readOnly": "false",
-			"required": true,
 			"system": true,
 			"type": "String"
 		},
@@ -88,6 +86,24 @@
 			"DBType": "String",
 			"businessType": "Text",
 			"defaultValue": "null",
+			"externalReferenceCode": "TYPE",
+			"indexed": true,
+			"indexedLanguageId": "en_US",
+			"label": {
+				"en_US": "Type"
+			},
+			"localized": true,
+			"name": "type",
+			"objectFieldSettings": [
+			],
+			"readOnly": "false",
+			"system": true,
+			"type": "String"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"defaultValue": "null",
 			"externalReferenceCode": "URL",
 			"indexed": true,
 			"indexedLanguageId": "en_US",
@@ -98,7 +114,6 @@
 			"objectFieldSettings": [
 			],
 			"readOnly": "false",
-			"required": true,
 			"system": true,
 			"type": "String"
 		},
@@ -106,13 +121,13 @@
 			"DBType": "Long",
 			"businessType": "Relationship",
 			"defaultValue": "null",
-			"externalReferenceCode": "ACCOUNT_TO_AI_HUB_CRAWL_TARGETS",
+			"externalReferenceCode": "ACCOUNT_TO_AI_HUB_CONTENT_RETRIEVERS",
 			"indexed": true,
 			"indexedLanguageId": "en_US",
 			"label": {
-				"en_US": "Account to Crawl Targets"
+				"en_US": "Account to Content Retrievers"
 			},
-			"name": "r_accountToAIHubCrawlTargets_accountEntryId",
+			"name": "r_accountToAIHubContentRetrievers_accountEntryId",
 			"objectDefinitionExternalReferenceCode1": "L_ACCOUNT",
 			"objectFieldSettings": [
 				{
@@ -121,13 +136,12 @@
 				},
 				{
 					"name": "objectRelationshipERCObjectFieldName",
-					"value": "r_accountToAIHubCrawlTargets_accountEntryERC"
+					"value": "r_accountToAIHubContentRetrievers_accountEntryERC"
 				}
 			],
-			"objectRelationshipExternalReferenceCode": "L_ACCOUNT_TO_L_AI_HUB_CRAWL_TARGETS",
+			"objectRelationshipExternalReferenceCode": "L_ACCOUNT_TO_L_AI_HUB_CONTENT_RETRIEVERS",
 			"readOnly": "false",
 			"relationshipType": "oneToMany",
-			"required": true,
 			"system": true,
 			"type": "Long"
 		}
@@ -143,7 +157,7 @@
 	],
 	"panelCategoryKey": "control_panel.object",
 	"pluralLabel": {
-		"en_US": "Crawl Targets"
+		"en_US": "Content Retrievers"
 	},
 	"portlet": true,
 	"scope": "company",
